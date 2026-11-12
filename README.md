@@ -2,7 +2,7 @@
 
 A small launch desk. It builds a [Clanker](https://clanker.gitbook.io/documentation) v5 config you can drop into another app, and it deploys tokens on [BOT Chain testnet](https://dev-docs.botchain.ai/docs/Developers/quick-guide/) through a factory any bot can call.
 
-Clanker’s own factory is not on chain 968. Keel does not pretend it is. The pool, the buy/sell tax, and the fee slots stay in the embed payload for chains Clanker actually supports. The testnet button only does what chain 968 can do: publish a factory, then launch a fixed-supply token cheaply.
+Clanker’s own factory is not on chain 968. Keel does not pretend it is. The pool, the buy/sell tax, and the fee slots stay in the embed payload for chains Clanker actually supports. On testnet, tokens are launched through the factory already at `0x6c5fdb0fee4280ee5989fe68e268ffced962b4f3`.
 
 ## Desk
 
@@ -42,7 +42,15 @@ The quote field starts as Base USDC `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
 
 **Deploy on testnet** is always clickable. If the name or symbol is missing, it sends you back to Configure.
 
-The first confirmation publishes `KeelFactory` (about 4,084 bytes of init code). That transaction creates the token implementation and locks it so it cannot be initialized. Every later launch is a call, not a new full contract:
+The testnet factory is already published. **Deploy token** calls it. Clear the factory field only if you want to publish a new one (about 4,084 bytes of init code).
+
+| | |
+| --- | --- |
+| Factory | [`0x6c5fdb0fee4280ee5989fe68e268ffced962b4f3`](https://scan.bohr.life/address/0x6c5fdb0fee4280ee5989fe68e268ffced962b4f3) |
+| Deploy tx | [`0x22487369208560a6268b3a4ccbb4795e749e07a047fec55f620b257452c4a2b4`](https://scan.bohr.life/tx/0x22487369208560a6268b3a4ccbb4795e749e07a047fec55f620b257452c4a2b4) |
+| Token implementation | `0x636e40de1708aac72fe991c11f536ed5b9b6b2e7` |
+
+That transaction created the token implementation and locked it so it cannot be initialized. Every launch after that is a call, not a new full contract:
 
 ```solidity
 function deploy(
@@ -58,7 +66,7 @@ function deploy(
 
 Selector: `0xcee1ffe0`.
 
-The factory clones the implementation (EIP-1167, 55 bytes of runtime code) and calls `initialize`. A short name with an empty image and description is about 420 bytes of calldata, so it spends less BOT than shipping the contract again. The `bot` argument is recorded in `Launched`. Leave the Bot field blank and the connected wallet is used. Any address can call `deploy`. Paste a factory address if you already published one.
+The factory clones the implementation (EIP-1167, 55 bytes of runtime code) and calls `initialize`. A short name with an empty image and description is about 420 bytes of calldata, so it spends less BOT than shipping the contract again. The `bot` argument is recorded in `Launched`. Leave the Bot field blank and the connected wallet is used. Any address can call `deploy`.
 
 The token has `transfer`, `approve`, `transferFrom`, `burn`, and `setMeta` (admin only). Supply is minted to `admin`. There is no mint function.
 

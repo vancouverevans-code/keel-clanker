@@ -7,6 +7,7 @@ import {
   DEFAULT_DRAFT,
   FACTORY,
   FACTORY_BYTES,
+  KEEL_FACTORY,
   SUPPLY,
   addressUrl,
   adminOf,
@@ -35,7 +36,7 @@ const LAYERS = [
     id: "factory",
     n: "01",
     title: "Factory",
-    body: `One permissionless call deploys everything. The documented v5 factory is ${FACTORY}. It is not on chain ${BOT.id}.`,
+    body: `On BOT Chain testnet the factory is ${KEEL_FACTORY}. The documented Clanker v5 factory is ${FACTORY}, and it is not on chain ${BOT.id}.`,
   },
   {
     id: "token",
@@ -77,7 +78,7 @@ function Home() {
   const [wallet, setWallet] = useState<string | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
   const [launches, setLaunches] = useState<Launch[]>([]);
-  const [factory, setFactory] = useState("");
+  const [factory, setFactory] = useState(KEEL_FACTORY);
   const [botAddr, setBotAddr] = useState("");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
@@ -501,11 +502,11 @@ function Home() {
       {tab === "chain" && (
         <section className="mt-4 rounded-xl border border-line bg-surface p-4 sm:p-5">
           <p className="text-sm text-muted">
-            Deploys on {BOT.name}. The first click publishes a factory any bot can call. Each token
-            after that is a clone
+            Deploys on {BOT.name} through the factory already on testnet. Each token is a clone
             {call ? ` (${creationBytes(call).toLocaleString()} bytes)` : sizeCall ? ` (${creationBytes(sizeCall).toLocaleString()} bytes)` : ""}, not a fresh{" "}
             {FACTORY_BYTES.toLocaleString()}-byte contract, so it spends less BOT. Supply stays{" "}
             {SUPPLY.toLocaleString()}. Leave image and description empty to keep the call smaller.
+            Clear the factory field only if you want to publish a new one.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Label text="Factory">
@@ -513,7 +514,7 @@ function Home() {
                 className={FIELD}
                 spellCheck={false}
                 value={factory}
-                placeholder="Filled on first deploy, or paste one"
+                placeholder="Factory on testnet, or empty to publish a new one"
                 onChange={(e) => setFactory(e.target.value.trim())}
               />
             </Label>
@@ -529,6 +530,17 @@ function Home() {
           </div>
           {factory.length > 0 && !factoryOk && (
             <p className="mt-2 text-sm text-clay">Factory needs a 20-byte address, or leave it empty.</p>
+          )}
+          {factoryOk && (
+            <a
+              href={addressUrl(factory)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 inline-flex items-center gap-1 text-sm text-brass"
+            >
+              Factory on explorer
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
           )}
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
             <Fact k="RPC" v={BOT.rpc} />

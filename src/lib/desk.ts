@@ -6,6 +6,8 @@ export const SUPPLY_WEI = SUPPLY * 10n ** 18n;
 
 export const BASE_USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 export const FACTORY = "0x572e88D3cD7f23E4241EB6ceDD96667271bF09A0";
+/** KeelFactory already published on BOT Chain testnet. */
+export const KEEL_FACTORY = "0x6c5fdb0fee4280ee5989fe68e268ffced962b4f3";
 
 export const BOT = {
   id: 968,
